@@ -1,6 +1,6 @@
 @host = http://localhost:5181
 
-GET {{host}}/weatherforecast/
+POST {{host}}/api/auth/register
 Content-Type: application/json
 
 ###

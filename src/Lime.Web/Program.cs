@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 
 // Add services to the container.
+services.AddDatabase(builder.Configuration);
 services.AddAuth(builder.Configuration);
 services.AddControllers();
 
@@ -25,6 +26,8 @@ services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseRouting();
+
 // Configure the HTTP request pipeline.
 app.UseCors(x => x
     .AllowAnyOrigin()
@@ -38,6 +41,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();

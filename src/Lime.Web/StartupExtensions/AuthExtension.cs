@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 
+using Lime.Infrastructure.Identity.Data;
 using Lime.Infrastructure.Identity.Models;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,8 +25,7 @@ namespace Lime.Web.StartupExtensions
 
             services.AddIdentity<LimeUser, IdentityRole>()
                 .AddRoles<IdentityRole>()
-
-                // TODO: .AddEntityFrameworkStores<AuthDbContext>()
+                .AddEntityFrameworkStores<AuthDbContext>()
                 .AddDefaultTokenProviders();
 
             IConfigurationSection jwtAppSettingOptions = configuration.GetSection(nameof(JwtIssuerOptions));

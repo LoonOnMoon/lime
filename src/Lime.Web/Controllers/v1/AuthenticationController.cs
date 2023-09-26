@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lime.Web.Controllers;
 
 [Authorize]
+[Route("api/auth")]
 
 // [ApiVersion("1.0")]
 public class AuthenticationController : ApiController

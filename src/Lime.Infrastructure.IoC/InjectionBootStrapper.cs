@@ -6,6 +6,6 @@ public class InjectionBootStrapper
 {
     public static void RegisterServices(IServiceCollection services)
     {
-        services.AddHttpContextAccessor();
+        // services.AddHttpContextAccessor();
     }
 }
