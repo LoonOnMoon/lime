@@ -366,7 +366,13 @@ dotnet_naming_style.s_camelcase.capitalization = camel_case
 dotnet_diagnostic.SA1633.severity = none
 
 # SA1649: File name should match first type name
-dotnet_diagnostic.SA1649.severity = none
+#dotnet_diagnostic.SA1649.severity = none
+
+# SA1600: Elements should be documented
+dotnet_diagnostic.SA1600.severity = none
 
 # SA0001: XML comment analysis is disabled due to project configuration
 dotnet_diagnostic.SA0001.severity = none
+
+# SA1623: The property's documentation summary text should begin with: 'Gets or sets'
+dotnet_diagnostic.SA1623.severity = none
