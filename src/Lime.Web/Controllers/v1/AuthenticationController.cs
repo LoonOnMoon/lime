@@ -32,7 +32,7 @@ public class AuthenticationController : ApiController
     [HttpPost]
     [AllowAnonymous]
     [Route("login")]
-    public async Task<IActionResult> Login([FromBody] LoginViewModel model)
+    public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
         var signInResult = await this.signInManager.PasswordSignInAsync(model.Email, model.Password, false, true);
         if (!signInResult.Succeeded)
@@ -50,7 +50,7 @@ public class AuthenticationController : ApiController
     [HttpPost]
     [AllowAnonymous]
     [Route("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
+    public async Task<IActionResult> Register([FromBody] RegisterModel model)
     {
         // Add User
         var appUser = new LimeUser { UserName = model.Email, Email = model.Email };
@@ -59,21 +59,6 @@ public class AuthenticationController : ApiController
         {
             return this.BadRequest();
         }
-
-        // Add UserRoles
-        identityResult = await this.userManager.AddToRoleAsync(appUser, "Admin");
-        if (!identityResult.Succeeded)
-        {
-            return this.BadRequest();
-        }
-
-        // Add UserClaims
-        var userClaims = new List<Claim>
-        {
-            new Claim("Editors_Write", "Write"),
-            new Claim("Editors_Remove", "Remove"),
-        };
-        await this.userManager.AddClaimsAsync(appUser, userClaims);
 
         // Generate jwt token
         return this.Ok();

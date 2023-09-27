@@ -1,6 +1,6 @@
 namespace Lime.Contracts.Authentication;
 
-public class RegisterViewModel
+public class RegisterModel
 {
     public string Email { get; set; } = null!;
 
