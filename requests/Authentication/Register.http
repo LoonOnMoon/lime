@@ -1,0 +1,9 @@
+@host = http://localhost:5181/api
+
+POST {{host}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "lime.admin@yopmail.com",
+    "password": "qwe123QWE!@#"
+}

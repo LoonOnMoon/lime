@@ -5,6 +5,12 @@ project.lock.json
 *.pyc
 nupkg/
 
+# App Settings
+appsettings.*.json
+
+# Database migrations
+Migrations/
+
 # Visual Studio Code
 .vscode/
 
