@@ -1,37 +1,38 @@
 using Lime.Infrastructure.Data.Context;
 using Lime.Infrastructure.Identity.Data;
-using Lime.Infrastructure.Identity.Models;
+using Lime.Web.Configuration;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Lime.Web.StartupExtensions
+namespace Lime.Web.StartupExtensions;
+
+public static class DatabaseExtension
 {
-    public static class DatabaseExtension
+    public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
     {
-        public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment env)
+        DatabaseOptions databaseOptions = services.BuildServiceProvider().GetRequiredService<DatabaseOptions>();
+
+        services.AddDbContext<AuthDbContext>(options =>
         {
-            services.AddDbContext<AuthDbContext>(options =>
+            options.UseNpgsql(databaseOptions.ConnectionString);
+
+            if (!env.IsProduction())
             {
-                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+                options.EnableDetailedErrors();
+                options.EnableSensitiveDataLogging();
+            }
+        });
 
-                if (!env.IsProduction())
-                {
-                    options.EnableDetailedErrors();
-                    options.EnableSensitiveDataLogging();
-                }
-            });
+        services.AddDbContext<LimeDbContext>(options =>
+        {
+            options.UseNpgsql(databaseOptions.ConnectionString);
 
-            services.AddDbContext<LimeDbContext>(options =>
+            if (!env.IsProduction())
             {
-                options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
-
-                if (!env.IsProduction())
-                {
-                    options.EnableDetailedErrors();
-                    options.EnableSensitiveDataLogging();
-                }
-            });
-            return services;
-        }
+                options.EnableDetailedErrors();
+                options.EnableSensitiveDataLogging();
+            }
+        });
+        return services;
     }
 }
