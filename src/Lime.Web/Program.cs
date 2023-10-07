@@ -1,3 +1,4 @@
+using Lime.Web.Middleware;
 using Lime.Web.StartupExtensions;
 using Lime.Web.StartupExtensions.ConfigurationExtensions;
 
@@ -5,27 +6,30 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
-
-var services = builder.Services;
-var configuration = builder.Configuration;
+var appSettings = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Information)
-    .Enrich.FromLogContext()
-    .WriteTo.File("./Logs/log-.log", rollingInterval: RollingInterval.Day)
-    .WriteTo.Console()
+    .ReadFrom.Configuration(appSettings)
     .CreateBootstrapLogger();
-
-builder.Host
-    .UseSerilog((context, services, configuration) => configuration
-        .ReadFrom.Configuration(context.Configuration)
-        .ReadFrom.Services(services)
-        .Enrich.FromLogContext()
-        .WriteTo.Console());
 
 try
 {
+    Log.Information("Lime starting up.");
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    var services = builder.Services;
+    var configuration = builder.Configuration;
+
+    builder.Host
+        .UseSerilog((context, services, configuration) => configuration
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services));
+
+    builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
+
     // Add configurations
     services.AddDatabaseConfiguration();
     services.AddJwtConfiguration();
@@ -50,6 +54,8 @@ try
 
     var app = builder.Build();
 
+    app.UseSerilogRequestLogging();
+
     app.UseRouting();
 
     // Configure the HTTP request pipeline.
@@ -65,18 +71,17 @@ try
         app.UseSwaggerUI();
     }
 
+    app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
     // app.UseHttpsRedirection();
 
     app.MapControllers();
 
     app.Run();
-
-    return 0;
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Application failed to start...");
-    return 1;
+    Log.Fatal(ex, "Lime failed to start...");
 }
 finally
 {

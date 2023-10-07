@@ -46,13 +46,6 @@ public class AuthenticationController : ApiController
         // Get User
         var appUser = await this.userManager.FindByEmailAsync(model.Email);
 
-        this.logger.LogInformation("Information");
-        this.logger.LogDebug("Debug");
-        this.logger.LogCritical("Critical");
-        this.logger.LogError("Error");
-        this.logger.LogTrace("Trace");
-        this.logger.LogWarning("Warning");
-
         // Generate jwt token
         return this.Ok();
     }
