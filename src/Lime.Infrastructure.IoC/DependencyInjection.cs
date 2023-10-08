@@ -24,9 +24,9 @@ public static class DependencyInjection
             .AddIdentity(env, typeAdapterConfig)
             .AddApplication(typeAdapterConfig);
 
-        return services;
-
         // services.AddHttpContextAccessor();
+
+        return services;
     }
 
     public static IApplicationBuilder RegisterMiddleware(this IApplicationBuilder app)

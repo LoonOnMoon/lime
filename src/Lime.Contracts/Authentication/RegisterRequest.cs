@@ -1,7 +1,12 @@
 namespace Lime.Contracts.Authentication;
 
-public record RegisterRequest(
-    string UserName,
-    string Email,
-    string Password,
-    string Organization);
+public record RegisterRequest
+{
+    public string? UserName { get; init; }
+
+    public string? Email { get; init; }
+
+    public string? Password { get; init; }
+
+    public string? Organization { get; init; }
+}

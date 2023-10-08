@@ -1,5 +1,8 @@
 namespace Lime.Contracts.Authentication;
 
-public record LoginRequest(
-    string UserNameOrEmail,
-    string Password);
+public class LoginRequest
+{
+    public string? UserNameOrEmail { get; init; }
+
+    public string? Password { get; init; }
+}
