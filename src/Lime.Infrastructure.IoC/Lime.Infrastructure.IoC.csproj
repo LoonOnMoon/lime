@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\Lime.Infrastructure.Data\Lime.Infrastructure.Data.csproj" />
     <ProjectReference Include="..\Lime.Domain\Lime.Domain.csproj" />
     <ProjectReference Include="..\Lime.Application\Lime.Application.csproj" />
+    <ProjectReference Include="..\Lime.Persistence\Lime.Persistence.csproj" />
     <ProjectReference Include="..\Lime.Infrastructure.Identity\Lime.Infrastructure.Identity.csproj" />
   </ItemGroup>
 </Project>

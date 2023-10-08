@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Lime.Web.Configuration;
+namespace Lime.Infrastructure.Identity.Configuration;
 
 public sealed class JwtOptions
 {

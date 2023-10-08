@@ -1,10 +1,10 @@
-using Lime.Web.Configuration;
+using Lime.Domain.Common.Exceptions.Program;
+using Lime.Infrastructure.Identity.Configuration;
 
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Serilog;
-
-namespace Lime.Web.StartupExtensions.ConfigurationExtensions;
+namespace Lime.Infrastructure.Identity.Extensions.ConfigurationExtensions;
 
 public static class JwtConfigurationExtension
 {
@@ -22,7 +22,7 @@ public static class JwtConfigurationExtension
                 }
                 catch (OptionsValidationException ex)
                 {
-                    throw ConfigurationValidator.GetStartupValidationException(ex);
+                    throw new StartupException(ex);
                 }
             });
 

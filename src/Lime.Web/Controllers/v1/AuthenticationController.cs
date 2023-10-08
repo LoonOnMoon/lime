@@ -1,7 +1,9 @@
 using System.Security.Claims;
 
+using Lime.Application.Authentication.Queries.Login;
 using Lime.Contracts.Authentication;
-using Lime.Infrastructure.Identity.Models;
+
+using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -15,53 +17,39 @@ namespace Lime.Web.Controllers;
 // [ApiVersion("1.0")]
 public class AuthenticationController : ApiController
 {
-    private readonly UserManager<LimeUser> userManager;
-    private readonly SignInManager<LimeUser> signInManager;
-    private readonly RoleManager<IdentityRole> roleManager;
-    private readonly ILogger<AuthenticationController> logger;
+    private readonly IMediator mediator;
 
     public AuthenticationController(
-        UserManager<LimeUser> userManager,
-        SignInManager<LimeUser> signInManager,
-        RoleManager<IdentityRole> roleManager,
-        ILogger<AuthenticationController> logger)
+        IMediator mediator)
     {
-        this.userManager = userManager;
-        this.signInManager = signInManager;
-        this.roleManager = roleManager;
-        this.logger = logger;
+        this.mediator = mediator;
     }
 
     [HttpPost]
     [AllowAnonymous]
     [Route("login")]
-    public async Task<IActionResult> Login([FromBody] LoginModel model)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var signInResult = await this.signInManager.PasswordSignInAsync(model.Email, model.Password, false, true);
-        if (!signInResult.Succeeded)
-        {
-            return this.BadRequest();
-        }
+        var query = new LoginQuery(request.Email, request.Password);
+        var authResult = await this.mediator.Send(query);
 
-        // Get User
-        var appUser = await this.userManager.FindByEmailAsync(model.Email);
-
-        // Generate jwt token
-        return this.Ok();
+        return this.Ok(new AuthenticationResponse(authResult.JwtToken));
     }
 
     [HttpPost]
     [AllowAnonymous]
     [Route("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterModel model)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        // Add User
-        var appUser = new LimeUser { UserName = model.Email, Email = model.Email };
-        var identityResult = await this.userManager.CreateAsync(appUser, model.Password);
-        if (!identityResult.Succeeded)
-        {
-            return this.BadRequest();
-        }
+        await Task.FromResult(0);
+
+        // // Add User
+        // var appUser = new LimeUser { UserName = model.Email, Email = model.Email };
+        // var identityResult = await this.userManager.CreateAsync(appUser, model.Password);
+        // if (!identityResult.Succeeded)
+        // {
+        //     return this.BadRequest();
+        // }
 
         // Generate jwt token
         return this.Ok();

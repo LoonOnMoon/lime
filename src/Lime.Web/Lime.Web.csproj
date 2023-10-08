@@ -1,11 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
     <PackageReference Include="mediatr" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0-rc.1.23421.29" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.11">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -19,7 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Lime.Contracts\Lime.Contracts.csproj" />
     <ProjectReference Include="..\Lime.Application\Lime.Application.csproj" />
-    <ProjectReference Include="..\Lime.Infrastructure.Identity\Lime.Infrastructure.Identity.csproj" />
     <ProjectReference Include="..\Lime.Infrastructure.IoC\Lime.Infrastructure.IoC.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,5 @@
+using Lime.Infrastructure.IoC;
 using Lime.Web.Middleware;
-using Lime.Web.StartupExtensions;
-using Lime.Web.StartupExtensions.ConfigurationExtensions;
 
 using Microsoft.AspNetCore.Mvc.Versioning;
 
@@ -30,13 +29,9 @@ try
 
     builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
-    // Add configurations
-    services.AddDatabaseConfiguration();
-    services.AddJwtConfiguration();
+    services.RegisterServices(builder.Environment);
 
-    // Add services to the container.
-    services.AddDatabase(configuration, builder.Environment);
-    services.AddAuth(configuration);
+    // services.AddApplication();
     services.AddControllers();
 
     // services.AddApiVersioning(opt =>
@@ -56,6 +51,7 @@ try
 
     app.UseSerilogRequestLogging();
 
+    app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
     app.UseRouting();
 
     // Configure the HTTP request pipeline.
@@ -64,20 +60,23 @@ try
         .AllowAnyMethod()
         .AllowAnyHeader());
 
-    app.UseAuth();
+    // Call IoC middleware registration
+    app.RegisterMiddleware();
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
         app.UseSwaggerUI();
     }
 
-    app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
-
     // app.UseHttpsRedirection();
 
     app.MapControllers();
 
     app.Run();
+}
+catch (HostAbortedException)
+{
+    Log.Information("Lime host has aborted.");
 }
 catch (Exception ex)
 {

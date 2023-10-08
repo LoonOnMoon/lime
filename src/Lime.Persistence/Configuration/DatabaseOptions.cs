@@ -1,4 +1,4 @@
-namespace Lime.Web.Configuration;
+namespace Lime.Persistence.Configuration;
 
 public sealed class DatabaseOptions
 {

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
-namespace Lime.Infrastructure.Data.Context;
+namespace Lime.Persistence.Context;
 
 public class LimeDbContext : DbContext
 {

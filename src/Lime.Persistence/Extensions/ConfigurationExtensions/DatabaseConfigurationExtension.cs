@@ -1,21 +1,25 @@
-using Lime.Web.Configuration;
-using Lime.Web.Models.Exceptions;
+using Lime.Domain.Common.Exceptions.Program;
+using Lime.Persistence.Configuration;
 
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using Npgsql;
 
-namespace Lime.Web.StartupExtensions.ConfigurationExtensions;
+namespace Lime.Persistence.Extensions.ConfigurationExtensions;
 
 public static class DatabaseConfigurationExtension
 {
-    public static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services)
+    public static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services, IHostEnvironment env)
     {
         services.AddOptions<DatabaseOptions>()
             .Configure<IConfiguration>(
                 (options, configuration) =>
                     {
                         options.ConnectionString = configuration.GetConnectionString(DatabaseOptions.ConnectionStringName)!;
+
                         try
                         {
                             using (var conn = new NpgsqlConnection(options.ConnectionString))
@@ -43,7 +47,7 @@ public static class DatabaseConfigurationExtension
                 }
                 catch (OptionsValidationException ex)
                 {
-                    throw ConfigurationValidator.GetStartupValidationException(ex);
+                    throw new StartupException(ex);
                 }
             });
 

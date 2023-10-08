@@ -2,7 +2,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lime.Domain\Lime.Domain.csproj" />
-    <ProjectReference Include="..\Lime.Infrastructure.Data\Lime.Infrastructure.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.7.1" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
   </ItemGroup>
 
 </Project>

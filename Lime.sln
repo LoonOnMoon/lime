@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lime.Contracts", "src\Lime.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lime.Domain", "src\Lime.Domain\Lime.Domain.csproj", "{3371C357-7380-450E-84FE-C94DFBE4F7FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lime.Infrastructure.Data", "src\Lime.Infrastructure.Data\Lime.Infrastructure.Data.csproj", "{A4BEBA0D-CB86-434A-83AF-EBF4808DEA2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lime.Persistence", "src\Lime.Persistence\Lime.Persistence.csproj", "{A4BEBA0D-CB86-434A-83AF-EBF4808DEA2D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lime.Infrastructure.Identity", "src\Lime.Infrastructure.Identity\Lime.Infrastructure.Identity.csproj", "{5D0EE273-DEC6-430E-B22A-77CE18544685}"
 EndProject

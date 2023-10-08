@@ -1,19 +1,26 @@
 using System.Text;
 
-using Lime.Infrastructure.Identity.Data;
+using Lime.Infrastructure.Identity.Configuration;
+using Lime.Infrastructure.Identity.Data.Context;
 using Lime.Infrastructure.Identity.Models;
-using Lime.Web.Configuration;
+using Lime.Persistence.Configuration;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Lime.Web.StartupExtensions;
+namespace Lime.Infrastructure.Identity.Extensions.StartupExtensions;
 
-public static class AuthExtension
+public static class IdentityStartupExtension
 {
-    public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddIdentity(this IServiceCollection services, IHostEnvironment env)
     {
+        DatabaseOptions databaseOptions = services.BuildServiceProvider().GetRequiredService<DatabaseOptions>();
         JwtOptions jwtOptions = services.BuildServiceProvider().GetRequiredService<JwtOptions>();
 
         var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.SecretKey));
@@ -62,11 +69,21 @@ public static class AuthExtension
         services.AddAuthorization(options =>
         {
         });
+        services.AddDbContext<AuthDbContext>(options =>
+        {
+            options.UseNpgsql(databaseOptions.ConnectionString);
 
+            if (!env.IsProduction())
+            {
+                options.EnableDetailedErrors();
+                options.EnableSensitiveDataLogging();
+            }
+        });
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IdentityStartupExtension).Assembly));
         return services;
     }
 
-    public static IApplicationBuilder UseAuth(this IApplicationBuilder app)
+    public static IApplicationBuilder UseIdentity(this IApplicationBuilder app)
     {
         app.UseAuthentication();
         app.UseAuthorization();
