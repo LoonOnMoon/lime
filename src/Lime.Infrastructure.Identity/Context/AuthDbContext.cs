@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lime.Infrastructure.Identity.Data.Context;
 
-public class AuthDbContext : IdentityDbContext<LimeUser>
+public class AuthDbContext : IdentityDbContext<LimeIdentityUser>
 {
     public AuthDbContext(DbContextOptions<AuthDbContext> options)
         : base(options)

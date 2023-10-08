@@ -1,28 +1,30 @@
-using System.Security.Claims;
-
+using Lime.Application.Authentication.Commands.Register;
 using Lime.Application.Authentication.Queries.Login;
 using Lime.Contracts.Authentication;
+
+using MapsterMapper;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lime.Web.Controllers;
 
 [Authorize]
 [Route("api/auth")]
-
-// [ApiVersion("1.0")]
+[ApiVersion("1.0")]
 public class AuthenticationController : ApiController
 {
-    private readonly IMediator mediator;
+    private readonly ISender sender;
+    private readonly IMapper mapper;
 
     public AuthenticationController(
-        IMediator mediator)
+        ISender mediator,
+        IMapper mapper)
     {
-        this.mediator = mediator;
+        this.sender = mediator;
+        this.mapper = mapper;
     }
 
     [HttpPost]
@@ -30,10 +32,10 @@ public class AuthenticationController : ApiController
     [Route("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var query = new LoginQuery(request.Email, request.Password);
-        var authResult = await this.mediator.Send(query);
+        var query = this.mapper.Map<LoginQuery>(request);
+        var authResult = await this.sender.Send(query);
 
-        return this.Ok(new AuthenticationResponse(authResult.JwtToken));
+        return this.Ok(this.mapper.Map<AuthenticationResponse>(authResult));
     }
 
     [HttpPost]
@@ -41,17 +43,9 @@ public class AuthenticationController : ApiController
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        await Task.FromResult(0);
+        var command = this.mapper.Map<RegisterCommand>(request);
+        var authResult = await this.sender.Send(command);
 
-        // // Add User
-        // var appUser = new LimeUser { UserName = model.Email, Email = model.Email };
-        // var identityResult = await this.userManager.CreateAsync(appUser, model.Password);
-        // if (!identityResult.Succeeded)
-        // {
-        //     return this.BadRequest();
-        // }
-
-        // Generate jwt token
-        return this.Ok();
+        return this.Ok(this.mapper.Map<AuthenticationResponse>(authResult));
     }
 }

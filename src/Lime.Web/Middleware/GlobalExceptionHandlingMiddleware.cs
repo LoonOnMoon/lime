@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
 
+using Lime.Application.Common.Errors;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -29,20 +31,32 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         }
         catch (Exception e)
         {
-            this.logger.LogError(e, e.Message);
+            var (statusCode, message) = e switch
+            {
+                IServiceException se => ((int)se.StatusCode, se.Title),
+                _ => (StatusCodes.Status500InternalServerError, null),
+            };
+
+            if (e is not IServiceException)
+            {
+                this.logger.LogError(e, e.Message);
+            }
 
             this.ApplyProblemDetailsDefaults(
                 context,
-                new ProblemDetails(),
-                HttpStatusCode.InternalServerError);
+                new ProblemDetails()
+                {
+                    Title = message,
+                },
+                statusCode: statusCode);
         }
     }
 
-    private async void ApplyProblemDetailsDefaults(HttpContext httpContext, ProblemDetails problemDetails, HttpStatusCode statusCode)
+    private async void ApplyProblemDetailsDefaults(HttpContext httpContext, ProblemDetails problemDetails, int statusCode)
     {
-        problemDetails.Status ??= (int)statusCode;
+        problemDetails.Status ??= statusCode;
 
-        if (this.options.ClientErrorMapping.TryGetValue((int)statusCode, out var clientErrorData))
+        if (this.options.ClientErrorMapping.TryGetValue(statusCode, out var clientErrorData))
         {
             problemDetails.Title ??= clientErrorData.Title;
             problemDetails.Type ??= clientErrorData.Link;
@@ -56,7 +70,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
 
         string json = JsonSerializer.Serialize(problemDetails);
 
-        httpContext!.Response.StatusCode = (int)statusCode;
+        httpContext!.Response.StatusCode = statusCode;
         httpContext!.Response.ContentType = "application/problem+json";
         await httpContext!.Response.WriteAsync(json);
     }

@@ -4,6 +4,8 @@ POST {{host}}/auth/register
 Content-Type: application/json
 
 {
+    "username": "lime.admin",
     "email": "lime.admin@yopmail.com",
-    "password": "qwe123QWE!@#"
+    "password": "qwe123QWE!@#",
+    "organization": "Anonymous"
 }

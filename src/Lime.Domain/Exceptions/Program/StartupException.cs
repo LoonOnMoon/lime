@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Options;
 
-namespace Lime.Domain.Common.Exceptions.Program;
+namespace Lime.Domain.Exceptions.Program;
 
 public class StartupException : Exception
 {

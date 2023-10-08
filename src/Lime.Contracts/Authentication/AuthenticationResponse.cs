@@ -1,4 +1,6 @@
 namespace Lime.Contracts.Authentication;
 
 public record AuthenticationResponse(
-    string JwtToken);
+    string Token,
+    string Organization,
+    string UserName);

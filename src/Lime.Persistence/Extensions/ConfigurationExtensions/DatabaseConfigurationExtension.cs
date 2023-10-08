@@ -1,4 +1,4 @@
-using Lime.Domain.Common.Exceptions.Program;
+using Lime.Domain.Exceptions.Program;
 using Lime.Persistence.Configuration;
 
 using Microsoft.Extensions.Configuration;

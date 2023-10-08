@@ -1,5 +1,7 @@
+using Lime.Application.Common.Interfaces.Persistence;
 using Lime.Persistence.Configuration;
 using Lime.Persistence.Context;
+using Lime.Persistence.Repositories;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,15 +16,17 @@ public static class DatabaseStartupExtension
         DatabaseOptions databaseOptions = services.BuildServiceProvider().GetRequiredService<DatabaseOptions>();
 
         services.AddDbContext<LimeDbContext>(options =>
-        {
-            options.UseNpgsql(databaseOptions.ConnectionString);
-
-            if (!env.IsProduction())
             {
-                options.EnableDetailedErrors();
-                options.EnableSensitiveDataLogging();
-            }
-        });
+                options.UseNpgsql(databaseOptions.ConnectionString);
+
+                if (!env.IsProduction())
+                {
+                    options.EnableDetailedErrors();
+                    options.EnableSensitiveDataLogging();
+                }
+            })
+            .AddScoped<IUserRepository, UserRepository>();
+
         return services;
     }
 }

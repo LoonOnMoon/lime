@@ -12,4 +12,7 @@ public sealed class JwtOptions
 
     [Required]
     public required string SecretKey { get; init; }
+
+    [Required]
+    public required TimeSpan ExpiresIn { get; init; }
 }

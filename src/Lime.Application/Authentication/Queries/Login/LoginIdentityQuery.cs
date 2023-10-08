@@ -4,6 +4,6 @@ using MediatR;
 
 namespace Lime.Application.Authentication.Queries.Login;
 
-public record LoginQuery(
+public record LoginIdentityQuery(
     string UserNameOrEmail,
-    string Password) : IRequest<AuthenticationResult>;
+    string Password) : IRequest<IdentityResult>;

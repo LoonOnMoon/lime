@@ -1,4 +1,4 @@
-using Lime.Domain.Common.Exceptions.Program;
+using Lime.Domain.Exceptions.Program;
 using Lime.Infrastructure.Identity.Configuration;
 
 using Microsoft.Extensions.DependencyInjection;

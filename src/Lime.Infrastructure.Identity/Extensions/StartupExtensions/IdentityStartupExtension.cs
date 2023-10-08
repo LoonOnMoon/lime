@@ -1,9 +1,14 @@
+using System.Reflection;
 using System.Text;
 
+using Lime.Infrastructure.Identity.Common;
+using Lime.Infrastructure.Identity.Common.Mapping;
 using Lime.Infrastructure.Identity.Configuration;
 using Lime.Infrastructure.Identity.Data.Context;
 using Lime.Infrastructure.Identity.Models;
 using Lime.Persistence.Configuration;
+
+using Mapster;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -18,19 +23,22 @@ namespace Lime.Infrastructure.Identity.Extensions.StartupExtensions;
 
 public static class IdentityStartupExtension
 {
-    public static IServiceCollection AddIdentity(this IServiceCollection services, IHostEnvironment env)
+    public static IServiceCollection AddIdentity(this IServiceCollection services, IHostEnvironment env, TypeAdapterConfig typeAdapterConfig)
     {
         DatabaseOptions databaseOptions = services.BuildServiceProvider().GetRequiredService<DatabaseOptions>();
         JwtOptions jwtOptions = services.BuildServiceProvider().GetRequiredService<JwtOptions>();
 
         var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtOptions.SecretKey));
+        var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
-        services.AddIdentity<LimeUser, IdentityRole>()
+        typeAdapterConfig.Scan(Assembly.GetExecutingAssembly());
+
+        services.AddSingleton<JwtTokenGenerator>();
+
+        services.AddIdentity<LimeIdentityUser, IdentityRole>()
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<AuthDbContext>()
             .AddDefaultTokenProviders();
-
-        var signingCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
         services.Configure<JwtIssuerOptions>(options =>
         {
@@ -85,8 +93,8 @@ public static class IdentityStartupExtension
 
     public static IApplicationBuilder UseIdentity(this IApplicationBuilder app)
     {
-        app.UseAuthentication();
-        app.UseAuthorization();
+        app.UseAuthentication()
+            .UseAuthorization();
 
         return app;
     }

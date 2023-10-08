@@ -1,7 +1,6 @@
 using Lime.Infrastructure.IoC;
+using Lime.Web.Extensions.StartupExtensions;
 using Lime.Web.Middleware;
-
-using Microsoft.AspNetCore.Mvc.Versioning;
 
 using Serilog;
 
@@ -20,32 +19,14 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     var services = builder.Services;
-    var configuration = builder.Configuration;
 
     builder.Host
         .UseSerilog((context, services, configuration) => configuration
             .ReadFrom.Configuration(context.Configuration)
             .ReadFrom.Services(services));
 
-    builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
-
-    services.RegisterServices(builder.Environment);
-
-    // services.AddApplication();
-    services.AddControllers();
-
-    // services.AddApiVersioning(opt =>
-    //     {
-    //         opt.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
-    //         opt.AssumeDefaultVersionWhenUnspecified = true;
-    //         opt.ReportApiVersions = true;
-    //         opt.ApiVersionReader = ApiVersionReader.Combine(
-    //             new UrlSegmentApiVersionReader(),
-    //             new HeaderApiVersionReader("x-api-version"),
-    //             new MediaTypeApiVersionReader("x-api-version"));
-    //     });
-    services.AddEndpointsApiExplorer();
-    services.AddSwaggerGen();
+    services.AddWeb()
+        .RegisterServices(builder.Environment);
 
     var app = builder.Build();
 
@@ -76,7 +57,7 @@ try
 }
 catch (HostAbortedException)
 {
-    Log.Information("Lime host has aborted.");
+    Log.Information("Lime aborted by host.");
 }
 catch (Exception ex)
 {
