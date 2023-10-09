@@ -1,11 +1,13 @@
 using System.Reflection;
 using System.Text;
 
+using Lime.Application.Authentication;
 using Lime.Infrastructure.Identity.Common;
 using Lime.Infrastructure.Identity.Common.Mapping;
 using Lime.Infrastructure.Identity.Configuration;
 using Lime.Infrastructure.Identity.Data.Context;
 using Lime.Infrastructure.Identity.Models;
+using Lime.Infrastructure.Identity.Services;
 using Lime.Persistence.Configuration;
 
 using Mapster;
@@ -87,7 +89,7 @@ public static class IdentityStartupExtension
                 options.EnableSensitiveDataLogging();
             }
         });
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(IdentityStartupExtension).Assembly));
+        services.AddScoped<IIdentityService, IdentityService>();
         return services;
     }
 

@@ -10,24 +10,23 @@ namespace Lime.Application.Authentication.Commands.Register;
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthenticationResult>
 {
-    private readonly ISender sender;
     private readonly IMapper mapper;
     private readonly IUserRepository userRepository;
+    private readonly IIdentityService identityService;
 
     public RegisterCommandHandler(
-        ISender sender,
         IMapper mapper,
-        IUserRepository userRepository)
+        IUserRepository userRepository,
+        IIdentityService identityService)
     {
-        this.sender = sender;
         this.mapper = mapper;
         this.userRepository = userRepository;
+        this.identityService = identityService;
     }
 
     public async Task<AuthenticationResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        var command = this.mapper.Map<RegisterIdentityCommand>(request);
-        var identityResult = await this.sender.Send(command);
+        var identityResult = await this.identityService.Register(request.UserName, request.Email, request.Password);
 
         var user = this.userRepository.Add(new User()
         {
@@ -35,10 +34,6 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Authentic
             Organization = request.Organization,
         });
 
-        // return this.mapper.Map<AuthenticationResult>(identityResult);
-        return new AuthenticationResult(
-            Token: identityResult.Token,
-            Organization: user.Organization,
-            UserName: identityResult.UserName);
+        return this.mapper.Map<AuthenticationResult>((identityResult, user));
     }
 }

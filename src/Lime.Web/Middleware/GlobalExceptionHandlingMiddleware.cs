@@ -37,7 +37,11 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                 _ => (StatusCodes.Status500InternalServerError, null),
             };
 
-            if (e is not IServiceException)
+            if (e is IServiceException)
+            {
+                this.logger.LogDebug(e, e.Message);
+            }
+            else
             {
                 this.logger.LogError(e, e.Message);
             }

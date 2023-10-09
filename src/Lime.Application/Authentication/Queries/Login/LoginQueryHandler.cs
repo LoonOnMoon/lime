@@ -11,24 +11,23 @@ namespace Lime.Application.Authentication.Commands.Register;
 
 public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResult>
 {
-    private readonly ISender sender;
     private readonly IMapper mapper;
     private readonly IUserRepository userRepository;
+    private readonly IIdentityService identityService;
 
     public LoginQueryHandler(
-        ISender sender,
         IMapper mapper,
+        IIdentityService identityService,
         IUserRepository userRepository)
     {
-        this.sender = sender;
         this.mapper = mapper;
+        this.identityService = identityService;
         this.userRepository = userRepository;
     }
 
     public async Task<AuthenticationResult> Handle(LoginQuery request, CancellationToken cancellationToken)
     {
-        var query = this.mapper.Map<LoginIdentityQuery>(request);
-        var identityResult = await this.sender.Send(query);
+        var identityResult = await this.identityService.Login(request.UserNameOrEmail, request.Password);
 
         var user = this.userRepository.GetUserById(identityResult.Id);
 
@@ -37,10 +36,6 @@ public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthenticationResul
             throw new Exception();
         }
 
-        // return this.mapper.Map<AuthenticationResult>(identityResult);
-        return new AuthenticationResult(
-            Token: identityResult.Token,
-            Organization: user.Organization,
-            UserName: identityResult.UserName);
+        return this.mapper.Map<AuthenticationResult>((identityResult, user));
     }
 }
