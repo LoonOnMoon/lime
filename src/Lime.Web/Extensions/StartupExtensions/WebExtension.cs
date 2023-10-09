@@ -24,6 +24,7 @@ public static class WebExtension
                         new MediaTypeApiVersionReader("x-api-version"));
                 })
             .AddControllers();
+
         return services;
     }
 }

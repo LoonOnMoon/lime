@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lime.Web.Controllers;
 
-[ApiController]
+// [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 public abstract class ApiController : ControllerBase
 {

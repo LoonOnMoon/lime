@@ -1,10 +1,11 @@
 using System.Diagnostics;
-using System.Net;
-using System.Net.Mime;
 using System.Text.Json;
+
+using FluentValidation;
 
 using Lime.Application.Common.Errors;
 
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -29,30 +30,47 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         {
             await next(context);
         }
-        catch (Exception e)
+        catch (ValidationException ve)
         {
-            var (statusCode, message) = e switch
+            Dictionary<string, string[]> errors = new();
+            foreach (var key in ve.Errors.Select(x => x.PropertyName).Distinct())
             {
-                IServiceException se => ((int)se.StatusCode, se.Title),
-                _ => (StatusCodes.Status500InternalServerError, null),
+                errors.Add(key, ve.Errors.Where(x => x.PropertyName == key).Select(x => x.ErrorMessage).ToArray());
+            }
+
+            var problemDetails = new ProblemDetails()
+            {
+                Title = "One or more validation errors occured.",
             };
 
-            if (e is IServiceException)
-            {
-                this.logger.LogDebug(e, e.Message);
-            }
-            else
-            {
-                this.logger.LogError(e, e.Message);
-            }
+            problemDetails.Extensions["errors"] = errors;
+
+            this.ApplyProblemDetailsDefaults(
+                context,
+                problemDetails,
+                statusCode: StatusCodes.Status400BadRequest);
+        }
+        catch (Exception e) when (e is IServiceException)
+        {
+            var se = (e as IServiceException)!;
+            this.logger.LogDebug(e, e.Message);
 
             this.ApplyProblemDetailsDefaults(
                 context,
                 new ProblemDetails()
                 {
-                    Title = message,
+                    Title = se.Title,
                 },
-                statusCode: statusCode);
+                statusCode: (int)se.StatusCode);
+        }
+        catch (Exception e)
+        {
+            this.logger.LogError(e, e.Message);
+
+            this.ApplyProblemDetailsDefaults(
+                context,
+                new ProblemDetails(),
+                statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 
@@ -72,7 +90,11 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
             problemDetails.Extensions["traceId"] = traceId;
         }
 
-        string json = JsonSerializer.Serialize(problemDetails);
+        string json = JsonSerializer.Serialize(problemDetails, new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.KebabCaseLower,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        });
 
         httpContext!.Response.StatusCode = statusCode;
         httpContext!.Response.ContentType = "application/problem+json";

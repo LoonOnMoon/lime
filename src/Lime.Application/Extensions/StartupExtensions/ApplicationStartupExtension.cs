@@ -1,4 +1,12 @@
+using System.Reflection;
+
+using FluentValidation;
+
+using Lime.Application.Common.Behaviors;
+
 using Mapster;
+
+using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +18,12 @@ public static class ApplicationStartupExtension
     {
         services.AddMappings(typeAdapterConfig)
             .AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ApplicationStartupExtension).Assembly));
+
+        services.AddScoped(
+            typeof(IPipelineBehavior<,>),
+            typeof(ValidationBehavior<,>));
+
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         return services;
     }
 }
