@@ -10,9 +10,12 @@ public static class JwtConfigurationExtension
 {
     public static IServiceCollection AddJwtConfiguration(this IServiceCollection services)
     {
-        services.AddOptions<JwtOptions>()
+        var options = services.AddOptions<JwtOptions>()
             .BindConfiguration(nameof(JwtOptions))
-            .ValidateDataAnnotations();
+            .ValidateDataAnnotations()
+            .Validate(
+                o => o.ExpiresIn > new TimeSpan(0, 0, 1),
+                $"Validation failed for '{nameof(JwtOptions)}' members: '{nameof(JwtOptions.ExpiresIn)}' with the error: 'The field {nameof(JwtOptions.ExpiresIn)} must be greater than 00:00:00.'.");
 
         services.AddSingleton(sp =>
             {
