@@ -3,8 +3,7 @@ migration=AutoMigration-$(date +'%Y-%m-%d--%H-%M-%S')
 
 # Assembly definitions
 web=src/Lime.Web
-identity=src/Lime.Infrastructure.Identity
-data=src/Lime.Infrastructure.Data
+infrastructure=src/Lime.Infrastructure
 
 # Pretty color coding
 GREEN=$'\e[0;32m'
@@ -17,10 +16,10 @@ echo ${GREEN}Setting up ${migration}${NC}
 echo ${LIGHT_BLUE}Identity Assembly:${NC}
 
 # Add a new migration for Identity Assembly
-dotnet ef migrations add ${migration} --project ${identity} --startup-project ${web} --context AuthDbContext
+dotnet ef migrations add ${migration} --project ${infrastructure} --startup-project ${web} --context LimeIdentityDbContext
 
 # Update database for Identity Assembly
-dotnet ef database update --project ${identity} --startup-project ${web} --context AuthDbContext
+dotnet ef database update --project ${infrastructure} --startup-project ${web} --context LimeIdentityDbContext
 
 echo ${GREEN}Identity Assembly finish.${NC}
 
@@ -28,9 +27,9 @@ echo ${GREEN}Identity Assembly finish.${NC}
 echo ${LIGHT_BLUE}Data Assembly:${NC}
 
 # Add a new migration for Data Assembly
-dotnet ef migrations add ${migration} --project ${data} --startup-project ${web} --context LimeDbContext
+dotnet ef migrations add ${migration} --project ${infrastructure} --startup-project ${web} --context LimeDbContext
 
 # Update database for Data Assembly
-dotnet ef database update --project ${data} --startup-project ${web} --context LimeDbContext
+dotnet ef database update --project ${infrastructure} --startup-project ${web} --context LimeDbContext
 
 echo ${GREEN}Data Assembly finish.${NC}

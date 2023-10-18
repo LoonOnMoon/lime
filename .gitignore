@@ -5,8 +5,10 @@ project.lock.json
 *.pyc
 nupkg/
 
-# App Settings
-appsettings.*.json
+appsettings.Database.json
+
+# Serilog logs
+Logs/
 
 # Database migrations
 Migrations/
