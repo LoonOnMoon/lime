@@ -1,9 +1,8 @@
-using Lime.Infrastructure.IoC;
-using Lime.Web.Extensions.StartupExtensions;
-using Lime.Web.Middleware;
+using Lime.Web.Extensions;
 
 using Serilog;
 
+// Create logger for failures before DI
 var appSettings = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
@@ -14,7 +13,7 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Lime starting up.");
+    Log.Information("Lime starting up...");
 
     var builder = WebApplication.CreateBuilder(args);
 
@@ -25,31 +24,12 @@ try
             .ReadFrom.Configuration(context.Configuration)
             .ReadFrom.Services(services));
 
-    services.AddWeb()
-        .RegisterServices(builder.Environment);
+    // Call Web layer startup extension
+    services.AddWeb(builder.Environment);
 
     var app = builder.Build();
 
-    app.UseSerilogRequestLogging();
-
-    app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
-    app.UseRouting();
-
-    // Configure the HTTP request pipeline.
-    app.UseCors(x => x
-        .AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
-
-    // Call IoC middleware registration
-    app.RegisterMiddleware();
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-    // app.UseHttpsRedirection();
+    app.UseWeb(app.Environment);
 
     app.MapControllers();
 
@@ -57,7 +37,7 @@ try
 }
 catch (HostAbortedException)
 {
-    Log.Information("Lime aborted by host.");
+    Log.Information("Lime aborted by host...");
 }
 catch (Exception ex)
 {

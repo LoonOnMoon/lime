@@ -5,7 +5,6 @@ using FluentValidation;
 
 using Lime.Application.Common.Errors;
 
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

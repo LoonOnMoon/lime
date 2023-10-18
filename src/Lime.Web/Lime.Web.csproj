@@ -26,9 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lime.Contracts\Lime.Contracts.csproj" />
     <ProjectReference Include="..\Lime.Application\Lime.Application.csproj" />
-    <ProjectReference Include="..\Lime.Infrastructure.IoC\Lime.Infrastructure.IoC.csproj" />
+    <ProjectReference Include="..\Lime.Infrastructure\Lime.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
