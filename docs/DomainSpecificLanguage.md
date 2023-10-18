@@ -1,0 +1,8 @@
+# The definition for all the domain specific language of lime and peach
+
+| Term     | Type of  | Definition                                                                                                                                                                                                                                 |
+|----------|----------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|  Article |          | An article represents a piece or post, agnostic of language, with the goal to convey news or a message.                                                                                                                                    |
+|   Canal  |          | An article splits into multiple canals, each representing that article in a specific language. The default canal for each article is in English. The default canal is required and considered the source of truth for translation canals.  |
+| Snapshot |          | Snapshots represent canals after a specific edit. The first time a canal is created is considered the root snapshot. Each subsequent edit is a snapshot.                                                                                   |
+|    Dam   | Snapshot | Dams are snapshots which significantly change the interpretation of the article, contextually or otherwise. When a dam is originally created in a specific canal,it should ideally also be created in all the other canals of the article. |

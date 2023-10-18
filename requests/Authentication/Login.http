@@ -1,0 +1,9 @@
+@host = http://localhost:5181/api
+
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+    "usernameOrEmail": "lime.admin",
+    "password": "qwe123QWE!@#"
+}
