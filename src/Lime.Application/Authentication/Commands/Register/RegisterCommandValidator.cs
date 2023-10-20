@@ -1,5 +1,3 @@
-using FluentValidation;
-
 namespace Lime.Application.Authentication.Commands.Register;
 
 public class RegisterCommandValidator : AbstractValidator<RegisterCommand>

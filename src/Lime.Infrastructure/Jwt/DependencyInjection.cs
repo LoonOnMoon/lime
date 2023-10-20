@@ -4,9 +4,9 @@ using Lime.Infrastructure.Jwt.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace Lime.Infrastructure.Jwt.Extensions;
+namespace Lime.Infrastructure.Jwt;
 
-public static class JwtConfigurationExtension
+public static class DependencyInjection
 {
     public static IServiceCollection AddJwtConfiguration(this IServiceCollection services)
     {

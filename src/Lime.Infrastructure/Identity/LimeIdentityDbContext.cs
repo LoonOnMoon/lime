@@ -1,4 +1,3 @@
-using Lime.Domain.Entities;
 using Lime.Infrastructure.Identity.Models;
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-using Lime.Web.Extensions;
+using Lime.Web;
 
 using Serilog;
 
@@ -25,11 +25,11 @@ try
             .ReadFrom.Services(services));
 
     // Call Web layer startup extension
-    services.AddWeb(builder.Environment);
+    services.AddWebServices(builder.Environment);
 
     var app = builder.Build();
 
-    app.UseWeb(app.Environment);
+    app.RegisterWebMiddleware(app.Environment);
 
     app.MapControllers();
 

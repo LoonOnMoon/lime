@@ -1,4 +1,4 @@
-using Lime.Domain.Entities;
+using Lime.Domain.User;
 
 using Microsoft.EntityFrameworkCore;
 

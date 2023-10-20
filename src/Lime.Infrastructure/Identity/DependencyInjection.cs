@@ -15,9 +15,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace Lime.Infrastructure.Identity.Extensions;
+namespace Lime.Infrastructure.Identity;
 
-public static class IdentityStartupExtension
+public static class DependencyInjection
 {
     public static IServiceCollection AddIdentity(this IServiceCollection services, IHostEnvironment env, TypeAdapterConfig typeAdapterConfig)
     {

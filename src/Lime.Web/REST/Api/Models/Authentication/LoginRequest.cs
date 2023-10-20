@@ -1,4 +1,4 @@
-namespace Lime.Web.REST.Models.Authentication;
+namespace Lime.Web.REST.Api.Models.Authentication;
 
 public class LoginRequest
 {

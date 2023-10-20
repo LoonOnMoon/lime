@@ -31,11 +31,10 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         }
         catch (ValidationException ve)
         {
-            Dictionary<string, string[]> errors = new();
-            foreach (var key in ve.Errors.Select(x => x.PropertyName).Distinct())
-            {
-                errors.Add(key, ve.Errors.Where(x => x.PropertyName == key).Select(x => x.ErrorMessage).ToArray());
-            }
+            Dictionary<string, string[]> errors =
+                ve.Errors
+                    .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
+                    .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
 
             var problemDetails = new ProblemDetails()
             {

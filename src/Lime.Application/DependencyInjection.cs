@@ -1,26 +1,18 @@
 using System.Reflection;
 
-using FluentValidation;
-
 using Lime.Application.Common.Behaviors;
-
-using Mapster;
-
-using MapsterMapper;
-
-using MediatR;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lime.Application.Extensions;
+namespace Lime.Application;
 
-public static class ApplicationStartupExtensions
+public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services, TypeAdapterConfig typeAdapterConfig)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services, TypeAdapterConfig typeAdapterConfig)
     {
         typeAdapterConfig.Scan(Assembly.GetExecutingAssembly());
 
-        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ApplicationStartupExtensions).Assembly));
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         services.AddScoped(
             typeof(IPipelineBehavior<,>),

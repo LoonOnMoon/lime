@@ -1,24 +1,18 @@
 using System.Reflection;
 
-using Lime.Application.Extensions;
-using Lime.Infrastructure.Identity.Extensions;
-using Lime.Infrastructure.Jwt.Extensions;
-using Lime.Infrastructure.Persistence.Extensions;
+using Lime.Application;
+using Lime.Infrastructure;
 using Lime.Web.Middleware;
-
-using Mapster;
-
-using MapsterMapper;
 
 using Microsoft.AspNetCore.Mvc.Versioning;
 
 using Serilog;
 
-namespace Lime.Web.Extensions;
+namespace Lime.Web;
 
-public static class WebStartupExtensions
+public static class DependencyInjection
 {
-    public static IServiceCollection AddWeb(this IServiceCollection services, IHostEnvironment env)
+    public static IServiceCollection AddWebServices(this IServiceCollection services, IHostEnvironment env)
     {
         services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
@@ -42,13 +36,8 @@ public static class WebStartupExtensions
         mapsterConfig.Scan(Assembly.GetExecutingAssembly());
 
         // Add Infrastructure layer to DI
-        services.AddDatabaseConfiguration(env)
-            .AddDatabase(env)
-            .AddJwtConfiguration()
-            .AddIdentity(env, mapsterConfig);
-
-        // Add Application layer to DI
-        services.AddApplication(mapsterConfig);
+        services.AddInfrastructureServices(env, mapsterConfig)
+            .AddApplicationServices(mapsterConfig);
 
         // Add Mapster
         services.AddSingleton(mapsterConfig);
@@ -57,7 +46,7 @@ public static class WebStartupExtensions
         return services;
     }
 
-    public static IApplicationBuilder UseWeb(this IApplicationBuilder app, IHostEnvironment env)
+    public static IApplicationBuilder RegisterWebMiddleware(this IApplicationBuilder app, IHostEnvironment env)
     {
         app.UseSerilogRequestLogging();
         app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
@@ -70,7 +59,7 @@ public static class WebStartupExtensions
             .AllowAnyHeader());
 
         // Call Web layer middleware registration
-        app.UseIdentity();
+        app.RegisterInfrastructureMiddleware(env);
 
         if (env.IsDevelopment())
         {
